@@ -6,7 +6,7 @@
   "type": "module",
   "dependencies": {
     "@atproto/api": "^0.17.4",
-    "@fluentui/react-components": "^9.72.3",
+    "@fluentui/react-components": "^9.72.4",
     "@fluentui/react-icons": "^2.0.312",
     "@reduxjs/toolkit": "^2.6.1",
     "@tanstack/react-query": "^5.71.10",
