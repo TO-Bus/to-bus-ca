@@ -17,6 +17,15 @@ export interface SubwayStopInfo {
   };
 }
 
+export interface NextBusBasic {
+  nextBusMinutes: string; // number
+}
+
+export interface BasicLine {
+  shortName: string;
+  longName: string;
+}
+
 export interface SubwayStations {
   routeBranchesWithStops: SubwayStopInfo[];
   Error?: boolean;

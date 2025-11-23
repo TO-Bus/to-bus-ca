@@ -5,7 +5,7 @@ import {
   Title1,
 } from "@fluentui/react-components";
 import { useQuery } from "@tanstack/react-query";
-import { useCallback, useEffect, useState } from "react";
+import { type JSX, useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import type { SubwayStopInfo } from "../../models/ttc.js";
@@ -14,7 +14,7 @@ import { addStop } from "../../store/suwbayDb/slice.js";
 import { SubwayAccordions } from "../accordions/SubwayAccordions.js";
 import RawDisplay from "../rawDisplay/RawDisplay.js";
 import styles from "./FetchSubwayRoute.module.css";
-import { ttcSubwayLine } from "./queries.js";
+import { ttcRouteBasic } from "./queries.js";
 
 const filterSubwayDirection = (input: string) => {
   return input.replace(/LINE \d \([\w-]+\) /, "").toLowerCase();
@@ -53,7 +53,7 @@ function RouteInfo(props: { line: number }): JSX.Element {
   const dispatch = useAppDispatch();
 
   const ttcSubwayLineResponse = useQuery({
-    ...ttcSubwayLine(lineNum),
+    ...ttcRouteBasic(lineNum),
     queryKey: [`ttc-subway-line-${lineNum}`, lastUpdatedAt.toString()],
   });
 

@@ -15,6 +15,7 @@ import TtcAlertList from "../components/alerts/AlertsPage.js";
 import FavouriteEta from "../components/eta/FavouriteEta.js";
 import Nearby from "../components/nearby/Nearby.js";
 import StopSearch from "../components/search/StopSearch.js";
+import LayoutToolbar from "../components/settings/LayoutToolbar.js";
 import { stopBookmarksSelectors } from "../store/bookmarks/slice.js";
 import { store, useAppDispatch } from "../store/index.js";
 import { changeSettings, settingsSelectors } from "../store/settings/slice.js";
@@ -50,18 +51,21 @@ export default function Home() {
   return (
     <main className="home-page">
       <Search />
-      <TabList
-        defaultSelectedValue={enabledTab}
-        className={style["direction-buttons"]}
-        onTabSelect={handleTabClick}
-      >
-        <Tab value={"nearby"}>{t("nav.label.nearby")}</Tab>
-        <Tab value={"favourites"}>{t("nav.label.bookmarks")}</Tab>
-        <Tab value={"alerts"} className={style["button-with-badge"]}>
-          {t("nav.label.serviceAlerts")}
-          <Badge>Beta</Badge>
-        </Tab>
-      </TabList>
+      <div className={style["nav-controls"]}>
+        <TabList
+          defaultSelectedValue={enabledTab}
+          className={style["direction-buttons"]}
+          onTabSelect={handleTabClick}
+        >
+          <Tab value={"nearby"}>{t("nav.label.nearby")}</Tab>
+          <Tab value={"favourites"}>{t("nav.label.bookmarks")}</Tab>
+          <Tab value={"alerts"} className={style["button-with-badge"]}>
+            {t("nav.label.serviceAlerts")}
+            <Badge>Beta</Badge>
+          </Tab>
+        </TabList>
+        <LayoutToolbar />
+      </div>
       <div className={enabledTab === "nearby" ? "" : style.hidden}>
         <Nearby />
       </div>

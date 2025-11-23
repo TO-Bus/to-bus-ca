@@ -9,17 +9,19 @@ import {
   Tab,
   TabList,
   Text,
+  Title1,
 } from "@fluentui/react-components";
 import { useQuery } from "@tanstack/react-query";
-import { useCallback, useMemo, useState } from "react";
+import { type JSX, useCallback, useMemo, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
 
 import type { LineStopElement } from "../../models/etaObjects.js";
 import { StopAccordions } from "../accordions/StopAccordions.js";
+import { SubwayAccordions } from "../accordions/SubwayAccordions.js";
 import { stopsParser } from "../parser/stopsParser.js";
 import RawDisplay from "../rawDisplay/RawDisplay.js";
 import style from "./FetchRoute.module.css";
-import { ttcRoute } from "./queries.js";
+import { ttcRoute, ttcRouteBasic } from "./queries.js";
 
 function RouteInfo(props: { line: number }): JSX.Element {
   const [lastUpdatedAt, setLastUpdatedAt] = useState<number>(Date.now());
@@ -29,6 +31,11 @@ function RouteInfo(props: { line: number }): JSX.Element {
   const ttcRouteResponse = useQuery({
     ...ttcRoute(props.line),
     queryKey: [`ttc-route-${props.line}`, lastUpdatedAt.toString()],
+  });
+
+  const ttcRouteBasicResponse = useQuery({
+    ...ttcRouteBasic(props.line),
+    enabled: !!ttcRouteResponse.error,
   });
 
   const stopDb = useMemo(() => {
@@ -71,6 +78,46 @@ function RouteInfo(props: { line: number }): JSX.Element {
     [enabledDir]
   );
 
+  if (ttcRouteBasicResponse.data) {
+    const data = ttcRouteBasicResponse.data;
+    if (!data.Error) {
+      const accordionList: JSX.Element[] = data.routeBranchesWithStops
+        .filter((element) => element.routeBranch.headsign)
+        .map((element) => {
+          return (
+            <li key={element.routeBranch.gtfsId}>
+              <SubwayAccordions
+                title={element.routeBranch.headsign}
+                lineNum={props.line}
+                result={element.routeBranchStops}
+                tag={element.routeBranch.gtfsId}
+              />
+            </li>
+          );
+        });
+
+      return (
+        <div className="stop-prediction-page">
+          <Title1>{data.routeBranchesWithStops[0].routeBranch.headsign}</Title1>
+          <ul>
+            <Accordion collapsible>{accordionList}</Accordion>
+            <li>
+              <RawDisplay data={data} />
+            </li>
+          </ul>
+        </div>
+      );
+    }
+    return (
+      <div className="stop-prediction-page">
+        <ul>
+          <li>
+            <RawDisplay data={data} />
+          </li>
+        </ul>
+      </div>
+    );
+  }
   if (ttcRouteResponse.data) {
     const data = ttcRouteResponse.data;
     if (!data.Error) {

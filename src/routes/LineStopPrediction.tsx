@@ -2,8 +2,7 @@ import { Link as LinkFluent, Title2 } from "@fluentui/react-components";
 import { useTranslation } from "react-i18next";
 import { Link, useParams } from "react-router";
 
-import LineStopPredictionInfo from "../components/fetch/FetchLineStop.js";
-import SubwayStopPredictionInfo from "../components/fetch/FetchSubwayStop.js";
+import TtcBasicEtaInfo from "../components/fetch/FetchSubwayStop.js";
 
 export default function LineStopPrediction() {
   const params = useParams();
@@ -20,12 +19,7 @@ export default function LineStopPrediction() {
         </LinkFluent>
       </Link>
       <Title2>{t("lines.lineAndStopInfo", { lineNum, stopNum })}</Title2>
-      {lineNum < 6 && (
-        <SubwayStopPredictionInfo line={lineNum} stopNum={stopNum} />
-      )}
-      {lineNum >= 6 && (
-        <LineStopPredictionInfo line={lineNum} stopNum={stopNum} />
-      )}
+      {<TtcBasicEtaInfo line={lineNum} stopNum={stopNum} />}
     </main>
   );
 }

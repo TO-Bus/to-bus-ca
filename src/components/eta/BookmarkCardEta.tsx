@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 
 import type { EtaBusWithID, LineStopEta } from "../../models/etaObjects.js";
 import { stopBookmarksSelectors } from "../../store/bookmarks/slice.js";
@@ -13,31 +13,22 @@ export function BookmarkCardEta(props: { item: LineStopEta }) {
   const stopBookmarks = stopBookmarksSelectors.selectAll(
     store.getState().stopBookmarks
   );
+  const stationType =
+    Number.parseInt(props.item.line.toString()) > 6 ? "bus" : "subway";
 
   const getSubwayPredictionsResponse = useQuery({
     ...ttcSubwayPredictions(props.item.stopTag),
     queryKey: [`subway-${props.item.stopTag}`],
-    enabled: false,
+    enabled: stationType === "subway",
     refetchInterval: 60 * 1000,
   });
 
   const getStopPredictionsResponse = useQuery({
     ...ttcStopPrediction(props.item.stopTag),
     queryKey: [`nearby-stop-${props.item.stopTag}`],
-    enabled: false,
+    enabled: stationType === "bus",
     refetchInterval: 60 * 1000,
   });
-
-  const stationType =
-    Number.parseInt(props.item.line.toString()) > 6 ? "bus" : "subway";
-
-  useEffect(() => {
-    if (stationType === "bus") {
-      getStopPredictionsResponse.refetch();
-    } else {
-      getSubwayPredictionsResponse.refetch();
-    }
-  }, []);
 
   const dataFetched = useMemo(
     () =>
@@ -89,8 +80,8 @@ export function BookmarkCardEta(props: { item: LineStopEta }) {
   }, [getSubwayPredictionsResponse.data]);
 
   let stopUrl =
-    props.item.type === "ttc-subway"
-      ? `/ttc/lines/${props.item.line[0]}/${props.item.stopTag}`
+    props.item.type === "ttc-subway" || !Array.isArray(props.item.line)
+      ? `/ttc/lines/${props.item.type === "ttc-subway" ? props.item.line[0] : props.item.line}/${props.item.stopTag}`
       : `/stops/${props.item.stopTag}`;
 
   if (props.item.type !== "ttc-subway") {

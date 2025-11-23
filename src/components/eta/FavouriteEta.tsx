@@ -3,8 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
 
 import { stopBookmarksSelectors } from "../../store/bookmarks/slice.js";
-import { store } from "../../store/index.js";
-import { settingsSelectors } from "../../store/settings/slice.js";
+import { store, useAppSelector } from "../../store/index.js";
 import { subwayDbSelectors } from "../../store/suwbayDb/slice.js";
 import Bookmark from "../bookmarks/Bookmark.js";
 import RawDisplay from "../rawDisplay/RawDisplay.js";
@@ -17,9 +16,9 @@ export default function FavouriteEta() {
   );
   const { t } = useTranslation();
   // const [lastUpdatedAt, setLastUpdatedAt] = useState<number>(0);
-  const unifiedEtaValue =
-    settingsSelectors.selectById(store.getState().settings, "unifiedEta")
-      ?.value !== "false";
+  const unifiedEtaValue = useAppSelector(
+    (state) => state.settings?.entities?.unifiedEta?.value === "true"
+  );
 
   let fetchUrl = "";
 

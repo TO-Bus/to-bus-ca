@@ -16,8 +16,7 @@ import { Link } from "react-router";
 
 import type { EtaBusWithID } from "../../models/etaObjects.js";
 import { editStopBookmark } from "../../store/bookmarks/slice.js";
-import { store, useAppDispatch } from "../../store/index.js";
-import { settingsSelectors } from "../../store/settings/slice.js";
+import { useAppDispatch, useAppSelector } from "../../store/index.js";
 import { DirectionBadge, TtcBadge } from "../badges.js";
 import { CountdownSec } from "../countdown/CountdownSec.js";
 import style from "./EtaCard.module.css";
@@ -34,9 +33,8 @@ export function EtaCard(props: {
   enabled?: string[];
   direction?: string;
 }) {
-  const etasNumber = settingsSelectors.selectById(
-    store.getState().settings,
-    "etasOnBookmarks"
+  const etasNumber = useAppSelector(
+    (state) => state.settings?.entities?.etasOnBookmarks?.value
   );
   const uniqueLines = [...new Set(props.lines)];
   const directionArray = props.direction?.split(", ") ?? [];
@@ -81,13 +79,13 @@ export function EtaCard(props: {
               <div
                 className={[
                   style["eta-card-countdown"],
-                  (etasNumber?.value ?? "1") === "3"
+                  (etasNumber ?? "1") === "3"
                     ? style["multi-etas"]
                     : style["single-eta"],
                 ].join(" ")}
               >
                 {props.subwayEtas
-                  ?.slice(0, (etasNumber?.value ?? "1") === "3" ? 3 : 1)
+                  ?.slice(0, (etasNumber ?? "1") === "3" ? 3 : 1)
                   .map((eta, index) => {
                     return (
                       <CountdownSec
@@ -97,7 +95,7 @@ export function EtaCard(props: {
                     );
                   })}
                 {props.etas
-                  ?.slice(0, (etasNumber?.value ?? "1") === "3" ? 3 : 1)
+                  ?.slice(0, (etasNumber ?? "1") === "3" ? 3 : 1)
                   .map((eta) => {
                     return (
                       <CountdownSec

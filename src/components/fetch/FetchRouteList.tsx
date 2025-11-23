@@ -1,12 +1,12 @@
 import { Card, Link as LinkFluent, Text } from "@fluentui/react-components";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useMemo } from "react";
 import { Link } from "react-router";
 
 import { subwayLines } from "../../data/ttc.js";
 import { TtcBadge } from "../badges.js";
 import RawDisplay from "../rawDisplay/RawDisplay.js";
-import { ttcLines } from "./queries.js";
+import { ttcLines, ttcLinesBasic } from "./queries.js";
 
 const parseRouteTitle = (input: string) => {
   const routeTitleRegex = /\d+-/;
@@ -18,29 +18,47 @@ const parseRouteTitle = (input: string) => {
 
 export function RoutesInfo() {
   const lineData = useQuery(ttcLines);
-  const [routesDb, setRoutesDb] = useState<{ tag: number; title: string }[]>(
-    []
-  );
-
-  useEffect(() => {
-    if (lineData.data?.route && (lineData.data?.route.length ?? 0) > 0) {
-      setRoutesDb(lineData.data.route);
-      // addRoutes(lineData.data.route);
-    }
-  }, [lineData]);
-
-  const routesCards = routesDb.map((routeItem) => {
-    return (
-      <li key={routeItem.tag} id={routeItem.tag.toString()}>
-        <Card className="card-container clickableCard">
-          <Link className="route-card" to={`/lines/${routeItem.tag}`}>
-            <TtcBadge key={routeItem.tag} lineNum={`${routeItem.tag}`} />
-            <Text>{parseRouteTitle(routeItem.title)}</Text>
-          </Link>
-        </Card>
-      </li>
-    );
+  const lineDataBasic = useQuery({
+    ...ttcLinesBasic,
+    enabled: !!lineData.error,
   });
+
+  const routesCards = useMemo(() => {
+    if (lineData.data) {
+      return lineData.data?.route.map((routeItem) => {
+        return (
+          <li key={routeItem.tag} id={routeItem.tag.toString()}>
+            <Card className="card-container clickableCard">
+              <Link className="route-card" to={`/lines/${routeItem.tag}`}>
+                <TtcBadge key={routeItem.tag} lineNum={`${routeItem.tag}`} />
+                <Text>{parseRouteTitle(routeItem.title)}</Text>
+              </Link>
+            </Card>
+          </li>
+        );
+      });
+    }
+    if (lineDataBasic.data) {
+      return lineDataBasic.data.map((routeItem) => {
+        return (
+          <li key={routeItem.shortName} id={routeItem.shortName}>
+            <Card className="card-container clickableCard">
+              <Link
+                className="route-card"
+                to={`/lines/${Number.parseInt(routeItem.shortName)}`}
+              >
+                <TtcBadge
+                  key={routeItem.shortName}
+                  lineNum={`${routeItem.shortName}`}
+                />
+                <Text>{parseRouteTitle(routeItem.longName)}</Text>
+              </Link>
+            </Card>
+          </li>
+        );
+      });
+    }
+  }, [lineData.data, lineDataBasic.data]);
 
   return (
     <article>
@@ -58,7 +76,7 @@ export function RoutesInfo() {
       </ul> */}
       <JumpBar />
       <ul className="route-list">
-        {subwayCards()}
+        {lineData.data && <SubwayCards />}
         {routesCards}
       </ul>
       {lineData.data && <RawDisplay data={lineData.data} />}
@@ -66,7 +84,7 @@ export function RoutesInfo() {
   );
 }
 
-function subwayCards() {
+function SubwayCards() {
   const result = subwayLines.map((subwayLine) => {
     return (
       <li key={subwayLine.line}>

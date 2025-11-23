@@ -9,6 +9,8 @@ import type {
   SubwayClosureJson,
 } from "../../models/etaJson.js";
 import type {
+  BasicLine,
+  NextBusBasic,
   parsedVehicleLocation,
   SubwayStations,
   SubwayStop,
@@ -62,6 +64,7 @@ export const fetchSubwayClosureLastUpdated = queryOptions<string>({
   },
 });
 
+/** @deprecated ttcBusPredictionsBasic */
 export const ttcLineStopPrediction = (line: number, stopNum: number) =>
   queryOptions<EtaPredictionJson>({
     queryKey: [`ttc-line-stop-${line}-${stopNum}`],
@@ -79,6 +82,27 @@ export const ttcLineStopPrediction = (line: number, stopNum: number) =>
     placeholderData: (prev) => prev,
   });
 
+export const ttcBusPredictionsBasic = (props: {
+  stopNum: number;
+  lineNum: number;
+}) =>
+  queryOptions<NextBusBasic[]>({
+    queryKey: [`ttc-bus-basic-${props.lineNum}-${props.stopNum}`],
+    queryFn: async () => {
+      const response = await fetch(
+        `https://www.ttc.ca/ttcapi/routedetail/GetNextBuses?routeId=${props.lineNum}&stopCode=${props.stopNum}`
+      );
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+
+      return response.json();
+    },
+    refetchInterval: 60 * 1000,
+    placeholderData: (prev) => prev,
+  });
+
+/** @deprecated use ttcLinesBasic */
 export const ttcLines = queryOptions<RoutesJson["body"]>({
   queryKey: ["ttc-lines"],
   queryFn: async () => {
@@ -96,6 +120,24 @@ export const ttcLines = queryOptions<RoutesJson["body"]>({
   placeholderData: (prev) => prev,
 });
 
+export const ttcLinesBasic = queryOptions<BasicLine[]>({
+  queryKey: ["ttc-lines-basic"],
+  queryFn: async () => {
+    const response = await fetch(
+      "https://www.ttc.ca/ttcapi/routedetail/listroutes"
+    );
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
+    }
+
+    return response.json();
+  },
+  staleTime: 24 * 60 * 60 * 1000,
+  refetchInterval: 60 * 1000,
+  placeholderData: (prev) => prev,
+});
+
+/** @deprecated use ttcRouteBasic */
 export const ttcRoute = (line: number) =>
   queryOptions<RouteJson>({
     queryKey: [`ttc-route-${line}`],
@@ -114,12 +156,31 @@ export const ttcRoute = (line: number) =>
     placeholderData: (prev) => prev,
   });
 
+/** @deprecated no replacement :( */
 export const ttcVehicleLocation = (vehicle: number) =>
   queryOptions<parsedVehicleLocation>({
     queryKey: [`ttc-vehicle-location-${vehicle}`],
     queryFn: async () => {
       const response = await fetch(
         `https://webservices.umoiq.com/service/publicJSONFeed?command=vehicleLocation&a=ttc&v=${vehicle}`
+      );
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+
+      return response.json();
+    },
+    refetchInterval: 60 * 1000,
+    placeholderData: (prev) => prev,
+  });
+
+// inaccessible; CORS Missing Allow Origin
+export const ttcBusTimeVehiclesLocation = (vehicle: number) =>
+  queryOptions({
+    queryKey: [`ttc-bustime-vehicle-location-${vehicle}`],
+    queryFn: async () => {
+      const response = await fetch(
+        "https://bustime.ttc.ca/bustime/api/v3/getvehicles?requestType=getvehicles&rt=95&key=RLBtWhbgvRGWERL9T5AgXfwQA&format=json&xtime=1763846697196"
       );
       if (!response.ok) {
         throw new Error("Network response was not ok");
@@ -206,7 +267,7 @@ export const ttcSubwayPredictions = (stopNum: number) =>
     placeholderData: (prev) => prev,
   });
 
-export const ttcSubwayLine = (lineNum: number) =>
+export const ttcRouteBasic = (lineNum: number) =>
   queryOptions<SubwayStations>({
     queryKey: [`ttc-subway-line-${lineNum}`],
     queryFn: async () => {
@@ -228,7 +289,9 @@ export const ttcSubwayLine = (lineNum: number) =>
     placeholderData: (prev) => prev,
   });
 
-// currently not used due to bad handling of bad stop ids
+/**
+ * currently not used due to bad handling of bad stop ids
+ *  @deprecated no replacement :( */
 export const ttcMultiStopsPredictions = (fetchUrl: string) =>
   queryOptions<EtaPredictionJson>({
     queryKey: [`ttc-multi-stops-predictions-${fetchUrl}`],

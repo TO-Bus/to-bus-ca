@@ -1,3 +1,8 @@
+.nav-controls {
+  display: flex;
+  flex-wrap: wrap;
+}
+
 .hidden {
   display: none;
 }
