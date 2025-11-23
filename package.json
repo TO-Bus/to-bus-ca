@@ -7,7 +7,7 @@
   "dependencies": {
     "@atproto/api": "^0.17.4",
     "@fluentui/react-components": "^9.72.3",
-    "@fluentui/react-icons": "^2.0.312",
+    "@fluentui/react-icons": "^2.0.313",
     "@reduxjs/toolkit": "^2.6.1",
     "@tanstack/react-query": "^5.71.10",
     "date-fns": "^4.1.0",
