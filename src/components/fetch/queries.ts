@@ -75,8 +75,12 @@ export const ttcLineStopPrediction = (line: number, stopNum: number) =>
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
+      const resp = await response.json();
+      if (resp.Error) {
+        return Promise.reject(resp);
+      }
 
-      return response.json();
+      return resp;
     },
     refetchInterval: 60 * 1000,
     placeholderData: (prev) => prev,

@@ -8,24 +8,30 @@
 
 //   return (
 //     <div className="gtfs-alerts">
-//       {Array.isArray(gtfsAlertsResp.data?.entity) && <h3>Current alerts</h3>}
-//       {Array.isArray(gtfsAlertsResp.data?.entity) &&
-//         gtfsAlertsResp.data?.entity.map((item) => {
-//           const string = item.alert?.headerText?.translation?.[0].text;
+//       {Array.isArray(gtfsAlertsResp.data?.entity) && (
+//         <details>
+//           <summary>
+//             <h3>Current alerts</h3>
+//           </summary>
+//           {gtfsAlertsResp.data?.entity.map((item) => {
+//             const string = item.alert?.headerText?.translation?.[0].text;
 
-//           if (string) {
-//             return (
-//               <p key={string} id={string}>
-//                 <ParsedTtcAlertText
-//                   badge={{ highlightAll: true }}
-//                   feedText={string}
-//                   id={string}
-//                 />
-//               </p>
-//             );
-//           }
-//           return null;
-//         })}
+//             if (string) {
+//               return (
+//                 <p key={string} id={string}>
+//                   <ParsedTtcAlertText
+//                     badge={{ highlightAll: true }}
+//                     feedText={string}
+//                     id={string}
+//                   />
+//                 </p>
+//               );
+//             }
+//             return null;
+//           })}
+//         </details>
+//       )}
+//       {}
 //     </div>
 //   );
 // }

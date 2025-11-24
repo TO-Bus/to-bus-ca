@@ -1,20 +1,35 @@
-import { openDB } from "idb";
+import { type DBSchema, openDB } from "idb";
 
 import { distanceOfTwoCoordinates } from "../components/nearby/coordinate-utils.js";
 import type { StopWithDistance } from "../models/db.js";
 
-const dbPromise = openDB("TTCStops", 1, {
-  upgrade(db) {
-    // Create a store of objects
+interface TTCStop extends DBSchema {
+  stops: {
+    key: string;
+    value: { stopId: string; lat: string; lon: string; tag: string };
+    indexes: { stopId: string; lat: string; lon: string; tag: string };
+  };
+}
+
+const dbPromise = openDB<TTCStop[]>("TTCStops", 2, {
+  async upgrade(db, oldVersion) {
     const store = db.createObjectStore("stops", {
       // The 'id' property of the object will be the key.
       keyPath: "id",
       // If it isn't explicitly set, create a value by auto incrementing.
       autoIncrement: true,
     });
-    // Create an index on the 'lat' & 'lon' property of the objects.
-    store.createIndex("lat", "lat");
-    store.createIndex("lon", "lon");
+    if ((oldVersion ?? 0) < 1) {
+      // Create an index on the 'lat' & 'lon' property of the objects.
+      store.createIndex("lat", "lat");
+      store.createIndex("lon", "lon");
+    }
+    if (oldVersion < 2) {
+      if (store) {
+        store.createIndex("tag", "tag");
+        store.createIndex("stopId", "stopId");
+      }
+    }
   },
 });
 
@@ -58,6 +73,17 @@ export async function getStopsWithinRange(
   }
 
   return results.sort((a, b) => a.realDistance - b.realDistance);
+}
+
+export async function getStopFromStopId(
+  id: number
+): Promise<{ title: string; tag: string } | undefined> {
+  const db = await dbPromise;
+  const indexes = db.transaction("stops").objectStore("stops").indexNames;
+  if (indexes.contains("stopId")) {
+    return db.getFromIndex("stops", "stopId", id.toString());
+  }
+  return undefined;
 }
 
 export async function getStop(key) {
