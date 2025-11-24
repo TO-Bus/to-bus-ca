@@ -1,4 +1,4 @@
-import { Button, LargeTitle, Text, Title1 } from "@fluentui/react-components";
+import { Button, Text, Title1 } from "@fluentui/react-components";
 import { ArrowClockwise24Regular } from "@fluentui/react-icons";
 import { useQuery } from "@tanstack/react-query";
 import { type JSX, useCallback, useMemo, useState } from "react";
@@ -9,15 +9,15 @@ import { subwayDbSelectors } from "../../store/suwbayDb/slice.js";
 import { getStopFromStopId } from "../../store/ttcStopsDb.js";
 import { TtcAlertList } from "../alerts/TtcAlertList.js";
 import { BookmarkButton } from "../bookmarks/BookmarkButton.js";
+import CountdownGroup from "../countdown/CountdownGroup.js";
 import { CountdownSec } from "../countdown/CountdownSec.js";
+import { etaParser } from "../parser/etaParser.js";
 import RawDisplay from "../rawDisplay/RawDisplay.js";
 import {
   ttcBusPredictionsBasic,
   ttcLineStopPrediction,
   ttcSubwayPredictions,
 } from "./queries.js";
-import { etaParser } from "../parser/etaParser.js";
-import CountdownGroup from "../countdown/CountdownGroup.js";
 
 function FetchTtcLineStop(props: {
   line: number;
