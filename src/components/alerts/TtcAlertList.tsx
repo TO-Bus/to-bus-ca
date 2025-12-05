@@ -17,10 +17,10 @@ export function TtcAlertList({
     ((bskyAlerts.data ?? []) as Skeet[]).filter((skeet) =>
       lineNum.some((line) => {
         const text = skeet.post.record.text as string;
-        return line < 6
+        return line <= 6
           ? text.match(`Line ${line}`)
           : text.startsWith(`${line}`);
-      })
+      }),
     ) ?? [];
   return (
     <>

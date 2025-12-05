@@ -28,29 +28,6 @@ a {
   }
 }
 
-.jumpbar {
-  position: sticky;
-  z-index: 5;
-  display: flex;
-  top: 0.5rem;
-  list-style: none;
-  justify-content: center;
-  padding: 1rem 0;
-
-  a {
-    padding: 1rem 0.5rem;
-    background-color: var(--colorNeutralBackground2);
-  }
-
-  li:first-of-type a {
-    border-radius: var(--borderRadiusXLarge) 0 0 var(--borderRadiusXLarge);
-  }
-
-  li:last-of-type a {
-    border-radius: 0 var(--borderRadiusXLarge) var(--borderRadiusXLarge) 0;
-  }
-}
-
 /* .bottomNav a, */
 .yrt .line-title {
   display: flex;

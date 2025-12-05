@@ -184,7 +184,7 @@ export const ttcBusTimeVehiclesLocation = (vehicle: number) =>
     queryKey: [`ttc-bustime-vehicle-location-${vehicle}`],
     queryFn: async () => {
       const response = await fetch(
-        "https://bustime.ttc.ca/bustime/api/v3/getvehicles?requestType=getvehicles&rt=95&key=RLBtWhbgvRGWERL9T5AgXfwQA&format=json&xtime=1763846697196"
+        "https://bustime.ttc.ca/bustime/api/v3/getvehicles?requestType=getvehicles&rt=95&key=?????&format=json&xtime=1763846697196"
       );
       if (!response.ok) {
         throw new Error("Network response was not ok");
@@ -220,7 +220,7 @@ export const ttcBusTimeVehiclesLocation = (vehicle: number) =>
 //   queryKey: ["ttc-gtfs-alerts"],
 //   queryFn: async () => {
 //     const response = await fetch(
-//       "https://gtfsrt.ttc.ca/alerts/all?format=binary"
+//       "https://gtfsrt.ttc.ca/alerts/all?format=binary",
 //     );
 //     if (!response.ok) {
 //       throw new Error("Network response was not ok");
@@ -228,7 +228,7 @@ export const ttcBusTimeVehiclesLocation = (vehicle: number) =>
 
 //     const buffer = await response.arrayBuffer();
 //     const feed = GtfsRealtimeBindings.transit_realtime.FeedMessage.decode(
-//       new Uint8Array(buffer)
+//       new Uint8Array(buffer),
 //     );
 //     return feed;
 //   },

@@ -55,6 +55,7 @@ function RouteInfo(props: { line: number }): JSX.Element {
   const ttcSubwayLineResponse = useQuery({
     ...ttcRouteBasic(lineNum),
     queryKey: [`ttc-subway-line-${lineNum}`, lastUpdatedAt.toString()],
+    enabled: !!lineNum && lineNum !== 3,
   });
 
   useEffect(() => {

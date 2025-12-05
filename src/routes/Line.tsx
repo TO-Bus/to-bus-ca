@@ -22,8 +22,8 @@ export default function Line() {
       <TtcAlertList lineNum={[lineNum]} type="compact" />
       <Title1>{t("lines.number", { lineNum })}</Title1>
       <Accordion defaultOpenItems collapsible>
-        {lineNum < 6 && <SubwayRouteInfo line={lineNum} />}
-        {lineNum >= 6 && <RouteInfo line={lineNum} />}
+        {lineNum <= 6 && <SubwayRouteInfo line={lineNum} />}
+        {lineNum > 6 && <RouteInfo line={lineNum} />}
       </Accordion>
     </main>
   );

@@ -6,6 +6,7 @@ import { Link } from "react-router";
 import { subwayLines } from "../../data/ttc.js";
 import { TtcBadge } from "../badges.js";
 import RawDisplay from "../rawDisplay/RawDisplay.js";
+import style from "./FetchRouteList.module.css";
 import { ttcLines, ttcLinesBasic } from "./queries.js";
 
 const parseRouteTitle = (input: string) => {
@@ -23,11 +24,40 @@ export function RoutesInfo() {
     enabled: !!lineData.error,
   });
 
+  function lineType(text: string) {
+    if (Number.parseInt(text) <= 6) {
+      return "rail";
+    }
+    switch (true) {
+      case /9[\d]{2}.*/.test(text):
+        return "express";
+      case /3[\d]{2}.*/.test(text):
+        return "night";
+      case /5[\d]{2}.*/.test(text):
+        return "streetcar";
+      case /^1$/.test(text):
+      case /[2,4][\d]{2}.*/.test(text):
+        return "seasonal";
+      default:
+        return "local";
+    }
+  }
+
   const routesCards = useMemo(() => {
+    const idCount = {
+      rail: 0,
+      express: 0,
+      night: 0,
+      streetcar: 0,
+      seasonal: 0,
+      local: 0,
+    };
     if (lineData.data) {
       return lineData.data?.route.map((routeItem) => {
+        const type = lineType(routeItem.tag.toString());
+        idCount[type]++;
         return (
-          <li key={routeItem.tag} id={routeItem.tag.toString()}>
+          <li key={routeItem.tag} id={idCount[type] === 1 ? type : undefined}>
             <Card className="card-container clickableCard">
               <Link className="route-card" to={`/lines/${routeItem.tag}`}>
                 <TtcBadge key={routeItem.tag} lineNum={`${routeItem.tag}`} />
@@ -40,8 +70,13 @@ export function RoutesInfo() {
     }
     if (lineDataBasic.data) {
       return lineDataBasic.data.map((routeItem) => {
+        const type = lineType(routeItem.shortName);
+        idCount[type]++;
         return (
-          <li key={routeItem.shortName} id={routeItem.shortName}>
+          <li
+            key={routeItem.shortName}
+            id={idCount[type] === 1 ? type : undefined}
+          >
             <Card className="card-container clickableCard">
               <Link
                 className="route-card"
@@ -58,10 +93,11 @@ export function RoutesInfo() {
         );
       });
     }
+    return;
   }, [lineData.data, lineDataBasic.data]);
 
   return (
-    <article>
+    <article className={style["ttc-route-list"]}>
       {/* <ul className="jumpbar">
         <li>
           <a href="#200">
@@ -105,22 +141,23 @@ function SubwayCards() {
 
 function JumpBar() {
   const jumpbarMap = [
-    ["", "Regular"],
-    [200, "Seasonal"],
-    [300, "Night"],
-    [501, "Streetcar"],
-    [900, "Express"],
+    ["", "Rail"],
+    ["local", "Local"],
+    ["seasonal", "Seasonal"],
+    ["night", "Night"],
+    ["streetcar", "Streetcar"],
+    ["express", "Express"],
   ];
 
   const jumpbarItems = [];
   for (let index = 0; index < jumpbarMap.length; index++) {
     jumpbarItems.push(
-      <li key={index}>
+      <li key={index} id={style[`jump-to-${jumpbarMap[index][0]}`]}>
         <a href={`#${jumpbarMap[index][0]}`}>
           <LinkFluent>{jumpbarMap[index][1]}</LinkFluent>
         </a>
       </li>
     );
   }
-  return <ul className="jumpbar">{jumpbarItems}</ul>;
+  return <ul className={style.jumpbar}>{jumpbarItems}</ul>;
 }

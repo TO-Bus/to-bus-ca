@@ -24,6 +24,10 @@ const customBgColor = (text: string) => {
       return "green";
     case /^4$/.test(text):
       return "purple";
+    case /^5$/.test(text):
+      return "orange";
+    case /^6$/.test(text):
+      return "gray";
     case /2[\d]{2}.*/.test(text):
       return "pink";
     default:
