@@ -1,7 +1,14 @@
 import { Button, Text, Title1 } from "@fluentui/react-components";
 import { ArrowClockwise24Regular } from "@fluentui/react-icons";
 import { useQuery } from "@tanstack/react-query";
-import { type JSX, lazy, useCallback, useMemo, useState } from "react";
+import {
+  type JSX,
+  lazy,
+  Suspense,
+  useCallback,
+  useMemo,
+  useState,
+} from "react";
 import { useTranslation } from "react-i18next";
 
 import type { NextBusBasic } from "../../models/ttc.js";
@@ -156,7 +163,9 @@ function FetchTtcLineStop(props: {
           <Title1>{stopName}</Title1>
         </>
       )}
-      <TtcAlertList lineNum={[props.line]} type="compact" />
+      <Suspense fallback={<div>Loading alerts...</div>}>
+        <TtcAlertList lineNum={[props.line]} type="compact" />
+      </Suspense>
       <div className="countdown-row">
         <RefreshButton onRefresh={fetchPredictionClick} />
         <BookmarkButton
