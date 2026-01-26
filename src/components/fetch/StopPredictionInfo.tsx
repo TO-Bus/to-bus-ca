@@ -1,7 +1,7 @@
 import { Button, Title1 } from "@fluentui/react-components";
 import { ArrowClockwise24Regular } from "@fluentui/react-icons";
 import { useQuery } from "@tanstack/react-query";
-import { lazy, useCallback, useMemo, useState } from "react";
+import { lazy, Suspense, useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import type { EtaBusWithID } from "../../models/etaObjects.js";
@@ -132,7 +132,9 @@ export default function StopPredictionInfo(props: {
               </div>
             </>
           )}
-          <TtcAlertList lineNum={lineList} type="compact" />
+          <Suspense fallback={<div>Loading alerts...</div>}>
+            <TtcAlertList lineNum={lineList} type="compact" />
+          </Suspense>
           <div className={style["countdown-button-group"]}>
             <RefreshButton handleRefreshClick={handleRefreshClick} />
             {etaDb[0] && (

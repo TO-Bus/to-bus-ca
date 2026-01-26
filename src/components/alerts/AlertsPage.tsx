@@ -5,7 +5,7 @@ import {
   TabList,
   type TabValue,
 } from "@fluentui/react-components";
-import { lazy, useCallback, useState } from "react";
+import { lazy, Suspense, useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import style from "./AlertsPage.module.css";
@@ -46,7 +46,9 @@ export default function TtcAlertList() {
       <div className={enabledTab === "now" ? "" : style.hidden}>
         <SubwayClosures startDate={currentDate} />
         {/*<CurrentAlerts />*/}
-        <AllBskyAlerts />
+        <Suspense fallback={<div>Loading alerts...</div>}>
+          <AllBskyAlerts />
+        </Suspense>
       </div>
       <div className={enabledTab === "weekend" ? "" : style.hidden}>
         <SubwayClosures startDate={weekend.toISOString().split("T")[0]} />
