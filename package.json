@@ -19,7 +19,7 @@
     "react-dom": "^19.2.0",
     "react-i18next": "^16.2.0",
     "react-redux": "^9.2.0",
-    "react-router": "^7.9.2",
+    "react-router": "^7.13.0",
     "rlayers": "^3.5.0",
     "typescript": "^5.8.2",
     "web-vitals": "^5.1.0"
@@ -53,7 +53,6 @@
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.5.2",
-    "@types/node": "^24.9.1",
     "@types/react": "^19.2.2",
     "@types/react-dom": "^19.2.2",
     "@types/react-test-renderer": "^19.1.0",
@@ -64,9 +63,8 @@
     "postcss": "^8.4.49",
     "postcss-nesting": "^13.0.1",
     "react-test-renderer": "^19.2.0",
-    "ts-node": "^10.9.2",
     "vite": "^7.1.12",
-    "vite-plugin-pwa": "^1.0.3",
+    "vite-plugin-pwa": "^1.2.0",
     "vitest": "^4.0.3"
   }
 }
