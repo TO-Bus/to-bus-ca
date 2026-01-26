@@ -1,13 +1,13 @@
 import { Button, Text, Title1 } from "@fluentui/react-components";
 import { ArrowClockwise24Regular } from "@fluentui/react-icons";
 import { useQuery } from "@tanstack/react-query";
-import { type JSX, useCallback, useMemo, useState } from "react";
+import { type JSX, lazy, useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
+
 import type { NextBusBasic } from "../../models/ttc.js";
 import { store } from "../../store/index.js";
 import { subwayDbSelectors } from "../../store/suwbayDb/slice.js";
 import { getStop } from "../../store/ttcStopsDb.js";
-import { TtcAlertList } from "../alerts/TtcAlertList.js";
 import { BookmarkButton } from "../bookmarks/BookmarkButton.js";
 import CountdownGroup from "../countdown/CountdownGroup.js";
 import { CountdownSec } from "../countdown/CountdownSec.js";
@@ -18,6 +18,8 @@ import {
   ttcLineStopPrediction,
   ttcSubwayPredictions,
 } from "./queries.js";
+
+const TtcAlertList = lazy(() => import("../alerts/TtcAlertList.js"));
 
 function FetchTtcLineStop(props: {
   line: number;

@@ -1,3 +1,4 @@
+import { lazy } from "react";
 import { createBrowserRouter } from "react-router";
 
 import App from "../App.js";
@@ -15,6 +16,10 @@ import LineSearch from "./LineSearch.js";
 import LineStopPrediction from "./LineStopPrediction.js";
 import RelativeVehiclePosition from "./RelativeVehiclePosition.js";
 import StopPrediction from "./StopPrediction.js";
+
+const CurrentAlerts = lazy(
+  () => import("../components/alerts/CurrentAlerts.js")
+);
 
 const ttcPages = [
   {
@@ -54,6 +59,17 @@ const ttcPages = [
     ],
     errorElement: <ErrorPage />,
   },
+  {
+    path: "vehicles",
+    children: [
+      { index: true, Component: LineSearch },
+      {
+        path: ":vehicle",
+        Component: RelativeVehiclePosition,
+      },
+    ],
+    errorElement: <ErrorPage />,
+  },
 ];
 
 export const router = createBrowserRouter([
@@ -63,6 +79,10 @@ export const router = createBrowserRouter([
     children: [
       { index: true, Component: Home },
       { path: "about", Component: About },
+      {
+        path: "alerts",
+        Component: CurrentAlerts,
+      },
       { path: "bookmarks", Component: BookmarkPage },
       { path: "settings", Component: Settings },
       {

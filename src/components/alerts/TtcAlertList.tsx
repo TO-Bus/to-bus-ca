@@ -1,16 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 
-import { atprotoTtcAlerts } from "../fetch/queries.js";
+import { atprotoTtcAlerts } from "../fetch/atproto.js";
 import type { Skeet } from "./bsky-alerts/Skeet.js";
 import { SkeetList } from "./bsky-alerts/SkeetList.js";
 
-export function TtcAlertList({
-  lineNum,
-  type,
-}: {
-  lineNum: number[];
-  type?: string;
-}) {
+function TtcAlertList({ lineNum, type }: { lineNum: number[]; type?: string }) {
   const bskyAlerts = useQuery(atprotoTtcAlerts);
 
   const filteredBskyAlerts =
@@ -34,3 +28,5 @@ export function TtcAlertList({
     </>
   );
 }
+
+export default TtcAlertList;

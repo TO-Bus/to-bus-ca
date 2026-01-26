@@ -2,10 +2,12 @@
 import react from "@vitejs/plugin-react";
 import postcssNesting from "postcss-nesting";
 import { defineConfig } from "vite";
+import { analyzer } from "vite-bundle-analyzer";
 import { VitePWA } from "vite-plugin-pwa";
 
 export default defineConfig({
   plugins: [
+    analyzer(),
     react(),
     VitePWA({
       registerType: "autoUpdate",

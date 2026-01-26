@@ -1,11 +1,11 @@
 import { Button, Title1 } from "@fluentui/react-components";
 import { ArrowClockwise24Regular } from "@fluentui/react-icons";
 import { useQuery } from "@tanstack/react-query";
-import { useCallback, useMemo, useState } from "react";
+import { lazy, useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
+
 import type { EtaBusWithID } from "../../models/etaObjects.js";
 import { useAppSelector } from "../../store/index.js";
-import { TtcAlertList } from "../alerts/TtcAlertList.js";
 import { DirectionBadge } from "../badges.js";
 import { BookmarkButton } from "../bookmarks/BookmarkButton.js";
 import CountdownGroup from "../countdown/CountdownGroup.js";
@@ -16,6 +16,8 @@ import RawDisplay from "../rawDisplay/RawDisplay.js";
 import LayoutToolbar from "../settings/LayoutToolbar.js";
 import style from "./FetchStop.module.css";
 import { ttcStopPrediction } from "./queries.js";
+
+const TtcAlertList = lazy(() => import("../alerts/TtcAlertList.js"));
 
 function RefreshButton({
   handleRefreshClick,

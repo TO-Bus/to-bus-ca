@@ -13,13 +13,13 @@ import { formatDistanceToNowStrict } from "date-fns";
 import { useCallback, useId, useMemo, useState } from "react";
 
 import { TtcBadge } from "../../badges.js";
-import { atprotoTtcAlerts } from "../../fetch/queries.js";
+import { atprotoTtcAlerts } from "../../fetch/atproto.js";
 import { getLineNumber } from "../AlertUtils.js";
 import style from "./AllBskyAlerts.module.css";
 import type { Skeet } from "./Skeet.js";
 import { SkeetList } from "./SkeetList.js";
 
-export const AllBskyAlerts = () => {
+const AllBskyAlerts = () => {
   const bskyAlerts = useQuery(atprotoTtcAlerts);
 
   const bskyAlertWithLines = useMemo(() => {
@@ -158,3 +158,5 @@ export const AllBskyAlerts = () => {
     </div>
   );
 };
+
+export default AllBskyAlerts;
