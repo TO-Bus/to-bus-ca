@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 
 import type { EtaBusWithID } from "../../models/etaObjects.js";
 import { useAppSelector } from "../../store/index.js";
+import { getStop } from "../../store/ttcStopsDb.js";
 import { DirectionBadge } from "../badges.js";
 import { BookmarkButton } from "../bookmarks/BookmarkButton.js";
 import CountdownGroup from "../countdown/CountdownGroup.js";
@@ -18,6 +19,9 @@ import style from "./FetchStop.module.css";
 import { ttcStopPrediction } from "./queries.js";
 
 const TtcAlertList = lazy(() => import("../alerts/TtcAlertList.js"));
+const StopVehiclesPosition = lazy(
+  () => import("../map/StopVehiclesPosition.js")
+);
 
 function RefreshButton({
   handleRefreshClick,
@@ -36,6 +40,13 @@ function RefreshButton({
 export default function StopPredictionInfo(props: {
   stopId: number;
 }): JSX.Element {
+  const stopData = useQuery({
+    queryKey: ["stop-data"],
+    queryFn: async () => {
+      const stopData = await getStop(props.stopId.toString());
+      return stopData ?? null;
+    },
+  });
   const stopId = props.stopId;
   const [lastUpdatedAt, setLastUpdatedAt] = useState<number>(Date.now());
   const { t } = useTranslation();
@@ -74,6 +85,10 @@ export default function StopPredictionInfo(props: {
     }
     return templist.sort((a, b) => a.epochTime - b.epochTime);
   }, [etaDb]);
+
+  const vehiclesList = useMemo(() => {
+    return unifiedEta.map((eta) => eta.vehicle);
+  }, [unifiedEta]);
 
   const lineList = useMemo(() => {
     return [
@@ -135,6 +150,16 @@ export default function StopPredictionInfo(props: {
           <Suspense fallback={<div>Loading alerts...</div>}>
             <TtcAlertList lineNum={lineList} type="compact" />
           </Suspense>
+          <details>
+            <summary>See the vehicles on the map instead (BETA)</summary>
+            <Suspense>
+              <StopVehiclesPosition
+                vehicles={vehiclesList}
+                stop={stopData.data}
+              />
+            </Suspense>
+          </details>
+          {stopData.data?.tag}
           <div className={style["countdown-button-group"]}>
             <RefreshButton handleRefreshClick={handleRefreshClick} />
             {etaDb[0] && (

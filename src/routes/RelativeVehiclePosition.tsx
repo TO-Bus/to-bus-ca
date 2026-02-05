@@ -24,7 +24,7 @@ export default function RelativeVehiclePosition() {
 
   const ttcVehicleLocationResponse = useQuery({
     ...ttcVehicleLocation(vehicleId),
-    queryKey: [`ttc-vehicle-location-${vehicleId}`, lastUpdatedAt.toString()],
+    queryKey: ["ttc-vehicle-location", vehicleId, lastUpdatedAt],
   });
 
   const onRefreshClick = useCallback(() => {
