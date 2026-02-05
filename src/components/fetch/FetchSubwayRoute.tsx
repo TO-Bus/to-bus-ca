@@ -76,7 +76,7 @@ function CountdownToOpening(props: { datetime: string }) {
       format: ["years", "months", "days", "hours", "minutes", "seconds"],
     });
   }, [timeRemaining]);
-  return <p>That's in {timeRemainingFormatted}</p>;
+  return <p>That&apos;s in {timeRemainingFormatted}</p>;
 }
 
 function RouteInfo(props: { line: number }): JSX.Element {
