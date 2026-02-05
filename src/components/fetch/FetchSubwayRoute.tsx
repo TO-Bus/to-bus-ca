@@ -60,9 +60,9 @@ function CountdownToOpening(props: { datetime: string }) {
   }
 
   useEffect(() => {
-    updateTimer()
+    updateTimer();
     const interval = setInterval(() => {
-      updateTimer()
+      updateTimer();
     }, 1000);
 
     return () => clearInterval(interval);
