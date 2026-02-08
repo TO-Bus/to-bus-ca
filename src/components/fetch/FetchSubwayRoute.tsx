@@ -18,11 +18,13 @@ import styles from "./FetchSubwayRoute.module.css";
 import { ttcRouteBasic } from "./queries.js";
 
 const filterSubwayDirection = (input: string) => {
-  return input.replace(/LINE \d \([\w-]+\) /, "").toLowerCase();
+  const split = input.split("Line");
+  return split.length > 1 ? split[1] : split[0];
 };
 
 const filterSubwayTitle = (input: string) => {
-  return `${input.split(/\(|\)/)[1].toLowerCase()} Line`;
+  const split = input.split("Line");
+  return `${split[0].toLowerCase()} Line`;
 };
 
 const line3Tribute = () => {
@@ -133,7 +135,7 @@ function RouteInfo(props: { line: number }): JSX.Element {
           return (
             <li key={element.routeBranch.gtfsId}>
               <SubwayAccordions
-                title={filterSubwayDirection(element.routeBranch.headsign)}
+                title={filterSubwayDirection(element?.routeBranch?.headsign)}
                 lineNum={props.line}
                 result={element.routeBranchStops}
                 tag={element.routeBranch.gtfsId}
@@ -146,7 +148,7 @@ function RouteInfo(props: { line: number }): JSX.Element {
         <div className="stop-prediction-page">
           <Title1 className={styles["subway-title"]}>
             {filterSubwayTitle(
-              data.routeBranchesWithStops[0].routeBranch.headsign
+              data?.routeBranchesWithStops?.[0]?.routeBranch?.headsign
             )}
           </Title1>
           <ul>
