@@ -22,7 +22,6 @@
     "rules": {
       "recommended": true,
       "complexity": {
-        "noImportantStyles": "off",
         "noVoid": "error"
       },
 
@@ -30,8 +29,7 @@
         "recommended": true,
         "useExhaustiveDependencies": "off",
         "noUndeclaredVariables": "error",
-        "useJsxKeyInIterable": "error",
-        "useParseIntRadix": "off"
+        "useJsxKeyInIterable": "error"
       },
       "style": {
         "recommended": true,
