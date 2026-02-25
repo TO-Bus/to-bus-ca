@@ -153,13 +153,15 @@ export default function StopPredictionInfo(props: {
           <details>
             <summary>See the vehicles on the map instead (BETA)</summary>
             <Suspense>
-              <StopVehiclesPosition
-                vehicles={vehiclesList}
-                stop={stopData.data}
-              />
+              {stopData.data && (
+                <StopVehiclesPosition
+                  vehicles={vehiclesList}
+                  stop={stopData.data}
+                />
+              )}
             </Suspense>
           </details>
-          {stopData.data?.tag}
+          {stopData?.data?.tag}
           <div className={style["countdown-button-group"]}>
             <RefreshButton handleRefreshClick={handleRefreshClick} />
             {etaDb[0] && (
