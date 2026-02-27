@@ -4,5 +4,5 @@
   "not_found_handling": "single-page-application",
   "assets": {
     "directory": "./dist"
-  },
+  }
 }
