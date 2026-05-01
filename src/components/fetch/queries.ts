@@ -13,6 +13,7 @@ import type {
   SubwayStations,
   SubwayStop,
 } from "../../models/ttc.js";
+import { getSize } from "../../store/ttcStopsDb.js";
 
 export const ttcStopPrediction = (stopId: number) =>
   queryOptions<EtaPredictionJson>({
@@ -268,4 +269,38 @@ export const getYrtStops = queryOptions<
     return response.json();
   },
   staleTime: 24 * 60 * 60 * 1000,
+});
+
+export const getGeolocation = queryOptions({
+  queryKey: ["user-geolocation"],
+  queryFn: async () =>
+    new Promise<GeolocationPosition>((resolve, reject) => {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          resolve(position);
+        },
+        (error) => {
+          reject(error);
+        }
+      );
+    }),
+  placeholderData: (prev) => prev,
+});
+
+export const getTtcStops = queryOptions({
+  queryKey: ["ttc-stops"],
+  queryFn: async () => {
+    const response = await fetch(
+      "https://thomassth.github.io/to-bus-stations/data/ttc/stops.json"
+    );
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
+    }
+    return response.json();
+  },
+});
+
+export const getTtcStopsSize = queryOptions<number>({
+  queryKey: ["ttc-stops-size"],
+  queryFn: () => getSize(),
 });
