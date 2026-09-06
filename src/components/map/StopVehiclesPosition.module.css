@@ -1,12 +1,12 @@
 .arrow-box {
-    position: relative;
-    top: -1em;
-    left: -0.5em;
-    width: 0.5em;
-    height: 1.5em;
-    background: red;
-    user-select: none;
-    pointer-events: none;
-    border: red solid 4px;
-    clip-path: polygon(100% 30%, 100% 100%, 0px 100%, 0px 30%, 50% 0px);
+  position: relative;
+  top: -1em;
+  left: -0.5em;
+  width: 0.5em;
+  height: 1.5em;
+  background: red;
+  user-select: none;
+  pointer-events: none;
+  border: red solid 4px;
+  clip-path: polygon(100% 30%, 100% 100%, 0px 100%, 0px 30%, 50% 0px);
 }
