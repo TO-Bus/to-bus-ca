@@ -1,6 +1,7 @@
 import { Button, Spinner, Switch, Tooltip } from "@fluentui/react-components";
 import { Info16Regular } from "@fluentui/react-icons";
-import { useCallback, useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import useNavigate from "../../routes/navigate.js";
 import { store, useAppDispatch } from "../../store/index.js";
@@ -9,6 +10,11 @@ import {
   settingsSelectors,
 } from "../../store/settings/slice.js";
 import { addStops, getSize } from "../../store/ttcStopsDb.js";
+import {
+  getGeolocation,
+  getTtcStops,
+  getTtcStopsSize,
+} from "../fetch/queries.js";
 import StopSearch from "../search/StopSearch.js";
 import style from "./Nearby.module.css";
 import NearbyList from "./NearbyList.js";
@@ -16,11 +22,7 @@ import NearbyList from "./NearbyList.js";
 export default function Nearby() {
   const { t } = useTranslation();
 
-  const [number, setNumber] = useState<number>(-1);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [coordinate, setCoordinate] = useState<{ lat?: number; lon?: number }>(
-    {}
-  );
+  const number = useQuery(getTtcStopsSize);
 
   const { navigate } = useNavigate();
 
@@ -41,29 +43,25 @@ export default function Nearby() {
       : false
   );
   const dispatch = useAppDispatch();
-  const [isLoadingLocation, setIsLoadingLocation] = useState<boolean>(false);
 
-  useEffect(() => {
-    getSize().then((result) => {
-      setNumber(result);
-    });
-  });
+  const ttcStopsResp = useQuery(getTtcStops);
 
   const handleRefresh = useCallback(async () => {
-    setIsLoading(true);
-
-    const response = await fetch(
-      "https://thomassth.github.io/to-bus-stations/data/ttc/stops.json"
-    );
-    const data = await response.json();
+    const data = (await ttcStopsResp.refetch()).data;
 
     addStops(data).then(() => {
-      setIsLoading(false);
-      getSize().then((result) => {
-        setNumber(result);
-      });
+      number.refetch();
     });
   }, []);
+
+  const geolocationResp = useQuery(getGeolocation);
+
+  const coordinate = useMemo(() => {
+    return {
+      lat: geolocationResp.data?.coords.latitude,
+      lon: geolocationResp.data?.coords.longitude,
+    };
+  }, [geolocationResp]);
 
   const handleGeolocation = useCallback(async () => {
     const number = await getSize();
@@ -72,14 +70,7 @@ export default function Nearby() {
     }
 
     if ("geolocation" in navigator) {
-      setIsLoadingLocation(true);
-      navigator.geolocation.getCurrentPosition((position) => {
-        setCoordinate({
-          lat: position.coords.latitude,
-          lon: position.coords.longitude,
-        });
-        setIsLoadingLocation(false);
-      });
+      geolocationResp.refetch();
     }
   }, []);
 
@@ -111,22 +102,26 @@ export default function Nearby() {
       <section className="item-info-placeholder">
         <StopSearch onValidSubmit={onSearchSubmit} />
       </section>
-      {number >= 0
-        ? t("nearby.totalStopsSummary", { stopsTotal: number })
+      {(number.data ?? 0) >= 0
+        ? t("nearby.totalStopsSummary", { stopsTotal: number.data })
         : t("nearby.checkingDb")}
       <div className={style["nearby-controls"]}>
         <Button onClick={handleRefresh}>
-          {isLoading ? t("nearby.checkingDb") : t("nearby.checkDb")}
+          {ttcStopsResp.isFetching
+            ? t("nearby.checkingDb")
+            : t("nearby.checkDb")}
         </Button>
         <Button onClick={handleGeolocation}>
-          {isLoadingLocation
+          {geolocationResp.isFetching
             ? t("nearby.checkingLocation")
             : coordinate.lat && coordinate.lon
               ? t("nearby.recheckLocation")
               : t("nearby.checkLocation")}
         </Button>
         <div className={style.spinner}>
-          {(isLoading || isLoadingLocation) && <Spinner />}
+          {(ttcStopsResp.isFetching || geolocationResp.isFetching) && (
+            <Spinner />
+          )}
         </div>
       </div>
       <div>
