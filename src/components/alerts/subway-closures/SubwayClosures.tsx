@@ -10,7 +10,6 @@ export const SubwayClosures = ({ startDate }: { startDate: string }) => {
   const subwayClosureQuery = useQuery(fetchSubwayClosure(startDate));
   const currentTime = new TZDate(new Date(), "America/Toronto");
   const currentDate = useMemo(() => {
-    console.log("current time rerun");
     return currentTime.toISOString().split("T")[0];
   }, [currentTime]);
   const title = useMemo(() => {
