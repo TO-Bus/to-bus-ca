@@ -1,3 +1,4 @@
+import { TZDate } from "@date-fns/tz";
 import {
   type SelectTabData,
   type SelectTabEvent,
@@ -5,13 +6,14 @@ import {
   TabList,
   type TabValue,
 } from "@fluentui/react-components";
-import { lazy, Suspense, useCallback, useState } from "react";
+import { lazy, Suspense, useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import style from "./AlertsPage.module.css";
 
 const AllBskyAlerts = lazy(() => import("./bsky-alerts/AllBskyAlerts.js"));
 
+import { parse } from "date-fns";
 // import CurrentAlerts from "./CurrentAlerts.js";
 import { SubwayClosures } from "./subway-closures/SubwayClosures.js";
 
@@ -24,15 +26,24 @@ export default function TtcAlertList() {
     [enabledTab]
   );
   const { t } = useTranslation();
-  const currentDate = new Date().toISOString().split("T")[0];
+  const currentTime = new TZDate(new Date(), "America/Toronto");
+  const currentDate = useMemo(() => {
+    console.log("current time rerun");
+    return currentTime.toISOString().split("T")[0];
+  }, [currentTime]);
   // get saturday's date
-  const weekend = new Date();
-  if (weekend.getDay() === 6) {
-    // show Sunday data on Saturdays, otherwise show the next Sunday
-    weekend.setDate(weekend.getDate() + 1);
-  } else {
-    weekend.setDate(weekend.getDate() + ((6 - weekend.getDay()) % 7));
-  }
+  const weekendDate = useMemo(() => {
+    const handlingDate = parse(currentDate, "yyyy-MM-dd", new Date());
+    if (handlingDate.getDay() === 6) {
+      // show Sunday data on Saturdays, otherwise show the next Sunday
+      handlingDate.setDate(handlingDate.getDate() + 1);
+    } else {
+      handlingDate.setDate(
+        handlingDate.getDate() + ((6 - handlingDate.getDay()) % 7)
+      );
+    }
+    return handlingDate.toISOString().split("T")[0];
+  }, [currentDate]);
 
   return (
     <div className="alert-page">
@@ -51,7 +62,7 @@ export default function TtcAlertList() {
         </Suspense>
       </div>
       <div className={enabledTab === "weekend" ? "" : style.hidden}>
-        <SubwayClosures startDate={weekend.toISOString().split("T")[0]} />
+        <SubwayClosures startDate={weekendDate} />
       </div>
     </div>
   );

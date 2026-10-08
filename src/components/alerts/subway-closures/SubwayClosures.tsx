@@ -1,23 +1,23 @@
+import { TZDate } from "@date-fns/tz";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 
-import {
-  fetchSubwayClosure,
-  fetchSubwayClosureLastUpdated,
-} from "../../fetch/queries.js";
+import { fetchSubwayClosure } from "../../fetch/queries.js";
 import { SubwayClosureItem } from "./SubwayClosureItem.js";
 import style from "./SubwayClosures.module.css";
 
 export const SubwayClosures = ({ startDate }: { startDate: string }) => {
   const subwayClosureQuery = useQuery(fetchSubwayClosure(startDate));
-  const currentDate =
-    useQuery(fetchSubwayClosureLastUpdated).data ??
-    new Date().toISOString().split("T")[0];
+  const currentTime = new TZDate(new Date(), "America/Toronto");
+  const currentDate = useMemo(() => {
+    console.log("current time rerun");
+    return currentTime.toISOString().split("T")[0];
+  }, [currentTime]);
   const title = useMemo(() => {
     if (startDate === currentDate) {
       return "Today's Subway Closures";
     }
-    return "Subway Closures";
+    return `Subway Closures on ${startDate}`;
   }, [startDate, currentDate]);
 
   const getClosuresByDateMatch = (match: boolean) =>
