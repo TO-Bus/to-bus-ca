@@ -27,6 +27,9 @@ import {
 } from "./queries.js";
 
 const TtcAlertList = lazy(() => import("../alerts/TtcAlertList.js"));
+const StopVehiclesPosition = lazy(
+  () => import("../map/StopVehiclesPosition.js")
+);
 
 function FetchTtcLineStop(props: {
   line: number;
@@ -129,14 +132,26 @@ function FetchTtcLineStop(props: {
     });
   }, [ttcBusPredictionsResponseBasic.data]);
 
-  const ttcBusEta = useMemo(() => {
+  const ttcBusEtaData = useMemo(() => {
     if (!ttcBusPredictionsResponse.data?.predictions) {
       return;
     }
 
-    const etaDb = etaParser(ttcBusPredictionsResponse.data);
+    return etaParser(ttcBusPredictionsResponse.data);
+  }, [ttcBusPredictionsResponse.data]);
 
-    return etaDb.map((element) => {
+  const vehicleList = useMemo(() => {
+    if (!ttcBusEtaData?.[0].etas) {
+      return [];
+    }
+    return ttcBusEtaData[0].etas.map((eta) => eta.vehicle);
+  }, [ttcBusEtaData?.[0].etas]);
+
+  const ttcBusEta = useMemo(() => {
+    if (!ttcBusEtaData) {
+      return;
+    }
+    return ttcBusEtaData.map((element) => {
       return (
         <CountdownGroup
           key={`line-group-${element.line}-${element.direction}-${element.stopTag}`}
@@ -166,6 +181,14 @@ function FetchTtcLineStop(props: {
       <Suspense fallback={<div>Loading alerts...</div>}>
         <TtcAlertList lineNum={[props.line]} type="compact" />
       </Suspense>
+      <details>
+        <summary>See the vehicles on the map instead (BETA)</summary>
+        <Suspense>
+          {stopData.data && (
+            <StopVehiclesPosition vehicles={vehicleList} stop={stopData.data} />
+          )}
+        </Suspense>
+      </details>
       <div className="countdown-row">
         <RefreshButton onRefresh={fetchPredictionClick} />
         <BookmarkButton

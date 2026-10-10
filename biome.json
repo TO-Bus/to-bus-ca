@@ -28,6 +28,7 @@
       "correctness": {
         "recommended": true,
         "useExhaustiveDependencies": "off",
+        "useParseIntRadix": "off",
         "noUndeclaredVariables": "error",
         "useJsxKeyInIterable": "error"
       },
@@ -48,6 +49,7 @@
       },
       "suspicious": {
         "recommended": true,
+        "noArrayIndexKey": "off",
         "noEmptyBlockStatements": "error",
         "noVar": "warn"
       }

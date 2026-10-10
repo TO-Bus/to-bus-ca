@@ -4,8 +4,8 @@ import { useQueries } from "@tanstack/react-query";
 import { fromLonLat } from "ol/proj.js";
 import { useMemo } from "react";
 import { RFeature, RLayerVector, RMap, ROSMWebGL, ROverlay } from "rlayers";
-import arrow from "../../../public/arrow.svg";
 import { ttcVehicleLocation } from "../fetch/queries.js";
+import style from "./StopVehiclesPosition.module.css";
 
 interface lonlat {
   lon: number;
@@ -83,20 +83,12 @@ export default function StopVehiclesPosition(props: {
                   key={`${lonlat.lon}${lonlat.lat}`}
                 >
                   <ROverlay className="no-interaction">
-                    <img
-                      src={arrow}
+                    <div
+                      className={style["arrow-box"]}
                       style={{
-                        position: "relative",
-                        top: -12,
-                        left: -12,
-                        userSelect: "none",
-                        pointerEvents: "none",
                         transform: `rotate(${lonlat.heading ?? 0}deg)`,
-                        filter: `opacity(${100 - index * 10}%)`,
+                        opacity: (100 - index * 10) / 100,
                       }}
-                      width={24}
-                      height={24}
-                      alt="bus icon"
                     />
                   </ROverlay>
                 </RFeature>
