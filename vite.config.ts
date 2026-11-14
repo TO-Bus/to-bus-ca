@@ -1,13 +1,12 @@
-/// <reference types="vitest" />
 import react from "@vitejs/plugin-react";
 import postcssNesting from "postcss-nesting";
-import { defineConfig } from "vite";
+import type { UserConfig } from "vite";
 import { analyzer } from "vite-bundle-analyzer";
 import { VitePWA } from "vite-plugin-pwa";
+import { defineConfig } from "vitest/config";
 
-export default defineConfig({
+const buildConfig = {
   plugins: [
-    analyzer(),
     react(),
     VitePWA({
       registerType: "autoUpdate",
@@ -70,4 +69,12 @@ export default defineConfig({
     environment: "jsdom",
     setupFiles: "./src/setupTests.ts",
   },
+} satisfies UserConfig;
+
+export default defineConfig(({ command }) => {
+  if (command === "serve") {
+    // dev mode
+    return { ...buildConfig, plugins: [analyzer(), ...buildConfig.plugins] };
+  }
+  return buildConfig;
 });

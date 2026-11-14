@@ -1,4 +1,4 @@
-import { Accordion, Title1 } from "@fluentui/react-components";
+import { Title1 } from "@fluentui/react-components";
 import { lazy, Suspense, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router";
@@ -16,7 +16,7 @@ export default function Line() {
 
   useEffect(() => {
     document.title = t("lines.browserTitle", { lineNum });
-  });
+  }, [lineNum]);
 
   return (
     <main className="line-page">
@@ -24,10 +24,8 @@ export default function Line() {
         <TtcAlertList lineNum={[lineNum]} type="compact" />
       </Suspense>
       <Title1>{t("lines.number", { lineNum })}</Title1>
-      <Accordion defaultOpenItems collapsible>
-        {lineNum <= 6 && <SubwayRouteInfo line={lineNum} />}
-        {lineNum > 6 && <RouteInfo line={lineNum} />}
-      </Accordion>
+      {lineNum <= 6 && <SubwayRouteInfo line={lineNum} />}
+      {lineNum > 6 && <RouteInfo line={lineNum} />}
     </main>
   );
 }
