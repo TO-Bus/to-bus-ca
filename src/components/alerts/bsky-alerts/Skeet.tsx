@@ -1,8 +1,8 @@
-import type { FeedViewPost } from "@atproto/api/dist/client/types/app/bsky/feed/defs.js";
+import type { AppBskyFeedDefs } from "@atproto/api";
 import { formatDistanceStrict } from "date-fns";
 import { ParsedTtcAlertText } from "../AlertUtils.js";
 
-export type Skeet = FeedViewPost & {
+export type Skeet = AppBskyFeedDefs.FeedViewPost & {
   post: {
     cid: string;
     record: { text: string; createdAt: string };
