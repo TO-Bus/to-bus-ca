@@ -8,7 +8,6 @@
   "formatter": {
     "enabled": true,
     "useEditorconfig": true,
-    "formatWithErrors": false,
     "indentStyle": "space",
     "lineEnding": "lf",
     "lineWidth": 80,
@@ -20,19 +19,20 @@
       "react": "recommended"
     },
     "rules": {
-      "recommended": true,
+      "preset": "recommended",
       "complexity": {
         "noVoid": "error"
       },
 
       "correctness": {
-        "recommended": true,
+        "preset": "recommended",
         "useExhaustiveDependencies": "off",
         "noUndeclaredVariables": "error",
-        "useJsxKeyInIterable": "error"
+        "useJsxKeyInIterable": "error",
+        "useParseIntRadix": "off"
       },
       "style": {
-        "recommended": true,
+        "preset": "recommended",
         "noYodaExpression": "error",
         "useBlockStatements": "error",
         "useConsistentBuiltinInstantiation": "error",
@@ -47,7 +47,8 @@
         "noUselessElse": "error"
       },
       "suspicious": {
-        "recommended": true,
+        "preset": "recommended",
+        "noArrayIndexKey": "off",
         "noEmptyBlockStatements": "error",
         "noVar": "warn"
       }
