@@ -41,7 +41,7 @@ export default function StopPredictionInfo(props: {
   stopId: number;
 }): JSX.Element {
   const stopData = useQuery({
-    queryKey: ["stop-data"],
+    queryKey: ["stop-data", props.stopId],
     queryFn: async () => {
       const stopData = await getStop(props.stopId.toString());
       return stopData ?? null;

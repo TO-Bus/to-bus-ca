@@ -4,8 +4,8 @@ import { useQueries } from "@tanstack/react-query";
 import { fromLonLat } from "ol/proj.js";
 import { useMemo } from "react";
 import { RFeature, RLayerVector, RMap, ROSMWebGL, ROverlay } from "rlayers";
-import arrow from "../../../public/arrow.svg";
 import { ttcVehicleLocation } from "../fetch/queries.js";
+import style from "./Arrow.module.css";
 
 interface lonlat {
   lon: number;
@@ -26,11 +26,17 @@ export default function StopVehiclesPosition(props: {
     queries: queriesList,
   });
 
+  function isExpress(line: string) {
+    return line.length === 3 && line[0] === "9";
+  }
+
   const lonLatList = useMemo(() => {
     return ttcVehicleLocationResponses.map((resp) => ({
       lon: resp.data?.vehicle?.lon,
       lat: resp.data?.vehicle?.lat,
       heading: resp.data?.vehicle?.heading,
+      line: resp.data?.vehicle?.routeTag,
+      isExpress: isExpress(resp.data?.vehicle?.routeTag || "0"),
     }));
   }, [ttcVehicleLocationResponses]);
 
@@ -83,20 +89,17 @@ export default function StopVehiclesPosition(props: {
                   key={`${lonlat.lon}${lonlat.lat}`}
                 >
                   <ROverlay className="no-interaction">
-                    <img
-                      src={arrow}
+                    <div
+                      data-line={lonlat.line}
+                      className={[
+                        style["arrow-box"],
+                        lonlat.isExpress ? style.express : "",
+                      ].join(" ")}
                       style={{
-                        position: "relative",
-                        top: -12,
-                        left: -12,
-                        userSelect: "none",
-                        pointerEvents: "none",
                         transform: `rotate(${lonlat.heading ?? 0}deg)`,
-                        filter: `opacity(${100 - index * 10}%)`,
+                        opacity:
+                          (1 / lonLatList.length) * (lonLatList.length - index),
                       }}
-                      width={24}
-                      height={24}
-                      alt="bus icon"
                     />
                   </ROverlay>
                 </RFeature>

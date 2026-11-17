@@ -5,8 +5,7 @@ import {
   Title1,
 } from "@fluentui/react-components";
 import { useQuery } from "@tanstack/react-query";
-import { type Duration, formatDuration, intervalToDuration } from "date-fns";
-import { type JSX, useCallback, useEffect, useMemo, useState } from "react";
+import { type JSX, useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import type { SubwayStopInfo } from "../../models/ttc.js";
@@ -48,39 +47,6 @@ const line3Tribute = () => {
   return lines.get(Math.floor(Math.random() * 11));
 };
 
-function CountdownToOpening(props: { datetime: string }) {
-  const endDateTime = Date.parse(props.datetime);
-  const [timeRemaining, setTimeRemaining] = useState<Duration>();
-
-  function updateTimer() {
-    setTimeRemaining(
-      intervalToDuration({
-        start: Date.now(),
-        end: endDateTime,
-      })
-    );
-  }
-
-  useEffect(() => {
-    updateTimer();
-    const interval = setInterval(() => {
-      updateTimer();
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [endDateTime]);
-
-  const timeRemainingFormatted = useMemo(() => {
-    if (!timeRemaining) {
-      return "...";
-    }
-    return formatDuration(timeRemaining, {
-      format: ["years", "months", "days", "hours", "minutes", "seconds"],
-    });
-  }, [timeRemaining]);
-  return <p>That&apos;s in {timeRemainingFormatted}</p>;
-}
-
 function RouteInfo(props: { line: number }): JSX.Element {
   const lineNum = props.line;
   const [lastUpdatedAt, setLastUpdatedAt] = useState<number>(Date.now());
@@ -94,37 +60,30 @@ function RouteInfo(props: { line: number }): JSX.Element {
     enabled: !!lineNum && lineNum !== 3,
   });
 
-  useEffect(() => {
-    const controller = new AbortController();
-
-    const setSubwayDb = (subwayApiRes: SubwayStopInfo[]) => {
-      subwayApiRes
-        .filter((element) => element.routeBranch.headsign)
-        .forEach((route) => {
-          route.routeBranchStops.forEach((stop) => {
-            dispatch(
-              addStop({
-                id: Number.parseInt(stop.code),
-                stop,
-              })
-            );
-          });
+  function setSubwayDb(subwayApiRes: SubwayStopInfo[]) {
+    subwayApiRes
+      .filter((element) => element.routeBranch.headsign)
+      .forEach((route) => {
+        route.routeBranchStops.forEach((stop) => {
+          dispatch(
+            addStop({
+              id: Number.parseInt(stop.code),
+              stop,
+            })
+          );
         });
-    };
+      });
+  }
 
+  useEffect(() => {
     if (lineNum !== 3 && ttcSubwayLineResponse.data) {
       setSubwayDb(ttcSubwayLineResponse.data?.routeBranchesWithStops);
     }
-
-    // when useEffect is called, the following clean-up fn will run first
-    return () => {
-      controller.abort();
-    };
   }, [lastUpdatedAt, ttcSubwayLineResponse.data]);
 
   const handleFetchBusClick = useCallback(() => {
     setLastUpdatedAt(Date.now());
-  }, [lastUpdatedAt]);
+  }, []);
 
   if (ttcSubwayLineResponse.data) {
     const data = ttcSubwayLineResponse.data;
@@ -167,14 +126,6 @@ function RouteInfo(props: { line: number }): JSX.Element {
             <li>
               Line 3 is permanently closed. <br />
               {line3Tribute()}
-            </li>
-          )}
-          {props.line === 5 && (
-            <li>
-              Line 5 soft opening in Feb 8
-              <CountdownToOpening
-                datetime={"2026-02-08T07:30:00.0000000-05:00"}
-              />
             </li>
           )}
           <li>
