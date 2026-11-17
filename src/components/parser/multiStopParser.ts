@@ -54,13 +54,10 @@ export function multiStopUnifier(
   json: EtaPredictionJson,
   stopBookmarks: StopBookmark[]
 ) {
-  const result = multiStopParser(json);
-
   // phase 2: combine a/c to stop number
   const unifiedList: stopBookmarkWithEta[] = stopBookmarks.map(
     (stopBookmark) => {
       const enabled = stopBookmark.enabled;
-
       return {
         stopId: stopBookmark.stopId,
         name: stopBookmark.name,
@@ -73,21 +70,34 @@ export function multiStopUnifier(
     }
   );
 
+  const result = multiStopParser(json);
+
+  // Create a Map for fast lookup by stopTag
+  const resultMap = new Map<number, LineStopEta>();
   for (const item of result) {
-    const matchingStop = unifiedList.findIndex(
-      (searching) => item.stopTag === searching.ttcId
-    );
-    if (item.direction) {
-      unifiedList[matchingStop].direction = item.direction;
-    } else if (
-      unifiedList[matchingStop].direction?.toLowerCase() !==
-      item.direction?.toLowerCase()
-    ) {
-      unifiedList[matchingStop].direction = "multiple";
+    resultMap.set(item.stopTag, item);
+  }
+
+  for (const matchingStop of unifiedList) {
+    const item = resultMap.get(matchingStop.ttcId);
+    if (!item) {
+      continue; // Skip if no match found
     }
-    unifiedList[matchingStop].etas = unifiedList[matchingStop].etas
-      .concat(item.etas)
-      .sort((a, b) => a.epochTime - b.epochTime);
+
+    // Handle direction logic
+    if (!matchingStop.direction) {
+      matchingStop.direction = item.direction || "";
+    } else if (
+      item.direction &&
+      matchingStop.direction.toLowerCase() !== item.direction.toLowerCase()
+    ) {
+      matchingStop.direction = "multiple";
+    }
+
+    // Merge and sort etas
+    matchingStop.etas = [...matchingStop.etas, ...(item.etas ?? [])].sort(
+      (a, b) => a.epochTime - b.epochTime
+    );
   }
   return unifiedList;
 }
