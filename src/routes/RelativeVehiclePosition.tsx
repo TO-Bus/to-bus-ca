@@ -20,7 +20,7 @@ export default function RelativeVehiclePosition() {
 
   useEffect(() => {
     document.title = `Stop ID ${stopNum} | TO bus`;
-  });
+  }, [stopNum]);
 
   const ttcVehicleLocationResponse = useQuery({
     ...ttcVehicleLocation(vehicleId),
@@ -29,7 +29,7 @@ export default function RelativeVehiclePosition() {
 
   const onRefreshClick = useCallback(() => {
     setLastUpdatedAt(Date.now());
-  }, [lastUpdatedAt]);
+  }, []);
 
   return (
     <main className={styles["relative-vehicle-position"]}>

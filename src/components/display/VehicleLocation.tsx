@@ -2,12 +2,12 @@ import { Text, Title1, Title2 } from "@fluentui/react-components";
 import { Point } from "ol/geom.js";
 import "ol/ol.css";
 import { fromLonLat } from "ol/proj.js";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { RFeature, RLayerVector, RMap, ROSMWebGL, ROverlay } from "rlayers";
 import type { RView } from "rlayers/RMap";
 
-import arrow from "../../../public/arrow.svg";
 import type { parsedVehicleLocation } from "../../models/ttc.js";
+import arrowStyle from "../map/Arrow.module.css";
 import RawDisplay from "../rawDisplay/RawDisplay.js";
 import styles from "./VehicleLoaction.module.css";
 
@@ -24,6 +24,12 @@ export default function VehicleLocation(props: {
   const [center, setCenter] = useState<number[] | undefined>(undefined);
   const [zoom, setZoom] = useState(16);
   const [view, setView] = useState<RView>({ center, zoom: 16 });
+
+  const isExpress = useMemo(() => {
+    return (
+      data.vehicle?.routeTag.length === 3 && data.vehicle?.routeTag[0] === "9"
+    );
+  }, [data.vehicle?.routeTag]);
 
   // store map values into react states; keep zoom & center consistent (until page reload)
   useEffect(() => {
@@ -72,19 +78,14 @@ export default function VehicleLocation(props: {
           {vehicleCoor && (
             <RFeature geometry={new Point(vehicleCoor)}>
               <ROverlay className="no-interaction">
-                <img
-                  src={arrow}
+                <div
+                  className={[
+                    arrowStyle["arrow-box"],
+                    isExpress ? arrowStyle.express : "",
+                  ].join(" ")}
                   style={{
-                    position: "relative",
-                    top: -12,
-                    left: -12,
-                    userSelect: "none",
-                    pointerEvents: "none",
                     transform: `rotate(${data.vehicle?.heading ?? 0}deg)`,
                   }}
-                  width={24}
-                  height={24}
-                  alt="bus icon"
                 />
               </ROverlay>
             </RFeature>
