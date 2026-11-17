@@ -134,7 +134,7 @@ function FetchTtcLineStop(props: {
 
   const ttcBusEtaData = useMemo(() => {
     if (!ttcBusPredictionsResponse.data?.predictions) {
-      return;
+      return undefined;
     }
 
     return etaParser(ttcBusPredictionsResponse.data);
@@ -149,7 +149,7 @@ function FetchTtcLineStop(props: {
 
   const ttcBusEta = useMemo(() => {
     if (!ttcBusEtaData) {
-      return;
+      return undefined;
     }
     return ttcBusEtaData.map((element) => {
       return (

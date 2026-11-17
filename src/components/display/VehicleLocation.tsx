@@ -18,10 +18,8 @@ export default function VehicleLocation(props: {
 }) {
   const data = props.data;
   const [error, setError] = useState(false);
-  const [vehicleCoor, setVehicleCoor] = useState<number[] | undefined>(
-    undefined
-  );
-  const [center, setCenter] = useState<number[] | undefined>(undefined);
+  const [vehicleCoor, setVehicleCoor] = useState<number[] | undefined>();
+  const [center, setCenter] = useState<number[] | undefined>();
   const [zoom, setZoom] = useState(16);
   const [view, setView] = useState<RView>({ center, zoom: 16 });
 
